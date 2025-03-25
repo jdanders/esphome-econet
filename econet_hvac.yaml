@@ -28,6 +28,14 @@ climate:
     current_temperature_datapoint: SPT
     target_temperature_low_datapoint: HEATSETP
     target_temperature_high_datapoint: COOLSETP
+    custom_preset_datapoint: STATMODE
+    custom_presets:
+      0: "Heat"
+      1: "Cool"
+      2: "Heat/Cool"
+      3: "Fan only"
+      4: "Off"
+      5: "Emergency Heat"
     mode_datapoint: STATMODE
     modes:
       0: "HEAT"
@@ -35,6 +43,7 @@ climate:
       2: "HEAT_COOL"
       3: "FAN_ONLY"
       4: "OFF"
+      5: "DRY"  # EMERGENCY HEAT
     custom_fan_mode_datapoint: STAT_FAN
     custom_fan_mode_no_schedule_datapoint: STATNFAN
     follow_schedule_datapoint: SCHEDULE
@@ -199,3 +208,16 @@ switch:
     name: "Follow Schedule"
     id: schedule
     switch_datapoint: SCHEDULE
+  - platform: template
+    id: emergency_heat_switch
+    name: "Emergency Heat"
+    lambda: |-
+      return (id(econet_climate).mode == 5);
+    turn_on_action:
+      - climate.control:
+          id: econet_climate
+          mode: DRY  # EMERGENCY HEAT mode
+    turn_off_action:
+      - climate.control:
+          id: econet_climate
+          mode: HEAT  # HEAT mode
