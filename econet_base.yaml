@@ -116,6 +116,13 @@ text_sensor:
     request_mod: 1
     icon: "mdi:alert"
     entity_category: "diagnostic"
+    # replace with text_sensor throttle filter when available
+    filters:
+      - lambda: |-
+          ESP_LOGI("alarm1", "new %s, old %s, cnt %d",  x, id(alarm_1).state, id(alarm_count).state);
+          if ((id(alarm_count).state > 0) &&
+              (x == "")) return id(alarm_1).state;
+          else return x;
   - platform: econet
     name: "Alarm 2"
     id: alarm_2
